@@ -16,7 +16,7 @@ export const printAssignments = (assignments: Assignment[], config: PlanConfig, 
   
   const content = targetAssignments.map(assign => `
     <div class="inspector-page">
-      <div class="header">
+      <div class="header no-break">
         <div class="header-right">
           <h1>جدول مهام تفتيش العمالة</h1>
           <div class="meta-box">
@@ -32,63 +32,79 @@ export const printAssignments = (assignments: Assignment[], config: PlanConfig, 
         </div>
         <div class="header-left">
           <p class="hospital-name">إدارة الخدمات البيئية بمستشفى الحرس الوطني</p>
-          <p>تاريخ البدء: ${config.startDate}</p>
-          <p>إجمالي العمالة: ${assign.totalWorkers}</p>
-          <p style="font-size: 8px; color: #94a3b8; margin-top: 5px;">حقوق البرنامج: ليلى سفر العتيبي</p>
+          <div class="print-meta">
+            <p>تاريخ البدء: ${config.startDate}</p>
+            <p>إجمالي العمالة: ${assign.totalWorkers}</p>
+          </div>
+          <p class="credits">حقوق البرنامج: ليلى سفر العتيبي</p>
         </div>
       </div>
 
-      ${assign.areas.map(area => `
-        <div class="area-section">
-          <div class="area-banner">
-            <h2>المنطقة الرئيسية (AREA): ${area.name}</h2>
-            <span>${area.zones.length} مواقع/أجنحة | ${area.totalWorkers} عامل</span>
-          </div>
-          
-          ${area.zones.map(zone => `
-            <div class="zone-wrapper">
-              <div class="zone-header">الموقع/الجناح (Ward): ${zone.name} | عدد العمال: ${zone.workers.length}</div>
-              <table>
-                <thead>
-                  <tr>
-                    <th style="width: 30px;">م</th>
-                    <th>الاسم (AR)</th>
-                    <th>ID#</th>
-                    <th>الرقم الوظيفي</th>
-                    <th>الشركة</th>
-                    <th>المسمى الوظيفي</th>
-                    <th>الجنسية</th>
-                    <th style="width: 40px;">الجنس</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${zone.workers.map((worker, index) => `
-                    <tr>
-                      <td class="center">${worker.sNo || (index + 1)}</td>
-                      <td class="font-bold">${worker.nameAr || worker.nameEng}</td>
-                      <td>${worker.idNo || '-'}</td>
-                      <td>${worker.empNo || '-'}</td>
-                      <td>${worker.company || '-'}</td>
-                      <td>${worker.position || '-'}</td>
-                      <td>${worker.nationality || '-'}</td>
-                      <td class="center">${worker.gender || '-'}</td>
-                    </tr>
-                  `).join('')}
-                </tbody>
-              </table>
+      <div class="areas-container">
+        ${assign.areas.map(area => `
+          <div class="area-group">
+            <div class="area-banner">
+              <div class="area-title">
+                <span class="label-white">المنطقة الرئيسية (AREA):</span>
+                <span class="area-name">${area.name}</span>
+              </div>
+              <div class="area-stats">
+                <span>${area.zones.length} مواقع/أجنحة</span>
+                <span class="separator">|</span>
+                <span>${area.totalWorkers} عامل إجمالي</span>
+              </div>
             </div>
-          `).join('')}
-        </div>
-      `).join('')}
+            
+            <div class="zones-container">
+              ${area.zones.map(zone => `
+                <div class="zone-card">
+                  <div class="zone-header">
+                    <span>الموقع/الجناح (Ward): <strong>${zone.name}</strong></span>
+                    <span class="zone-count">عدد العمال: ${zone.workers.length}</span>
+                  </div>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th style="width: 35px;">م</th>
+                        <th style="width: 200px;">الاسم (AR)</th>
+                        <th>ID#</th>
+                        <th>الرقم الوظيفي</th>
+                        <th>الشركة</th>
+                        <th>المسمى الوظيفي</th>
+                        <th>الجنسية</th>
+                        <th style="width: 45px;">الجنس</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${zone.workers.map((worker, index) => `
+                        <tr>
+                          <td class="center">${worker.sNo || (index + 1)}</td>
+                          <td class="font-bold">${worker.nameAr || worker.nameEng}</td>
+                          <td>${worker.idNo || '-'}</td>
+                          <td>${worker.empNo || '-'}</td>
+                          <td>${worker.company || '-'}</td>
+                          <td>${worker.position || '-'}</td>
+                          <td>${worker.nationality || '-'}</td>
+                          <td class="center">${worker.gender || '-'}</td>
+                        </tr>
+                      `).join('')}
+                    </tbody>
+                  </table>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
 
-      <div class="footer-signatures">
+      <div class="footer-signatures no-break">
         <div class="signature">
-          <p class="sig-label">توقيع المفتش</p>
+          <p class="sig-label">توقيع المفتش المسؤول</p>
           <div class="sig-line"></div>
           <p class="sig-name">${assign.inspector.name}</p>
         </div>
         <div class="signature">
-          <p class="sig-label">اعتماد المشرف العام</p>
+          <p class="sig-label">اعتماد إدارة الخدمات البيئية</p>
           <div class="sig-line"></div>
           <p class="sig-name">ختم الإدارة</p>
         </div>
@@ -100,108 +116,127 @@ export const printAssignments = (assignments: Assignment[], config: PlanConfig, 
     <html dir="rtl" lang="ar">
     <head>
       <title>${title}</title>
-      <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
       <style>
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; }
         body { 
           font-family: 'Cairo', sans-serif; 
           margin: 0; 
           padding: 0; 
-          color: #1a202c; 
+          color: #1e293b; 
           font-size: 11px;
           background: white;
         }
         @page { 
           size: A4 landscape; 
-          margin: 15mm 10mm; 
+          margin: 10mm; 
         }
         .inspector-page { 
           page-break-after: always; 
-          padding: 0;
-          margin-bottom: 20px;
+          padding-bottom: 20px;
         }
+        .inspector-page:last-child { page-break-after: auto; }
+
+        .no-break { page-break-inside: avoid; }
+
         .header { 
           display: flex; 
           justify-content: space-between; 
-          border-bottom: 2px solid #15803d; 
+          border-bottom: 3px solid #15803d; 
           padding-bottom: 15px; 
           margin-bottom: 20px; 
           align-items: flex-start;
         }
-        h1 { margin: 0; font-size: 22px; font-weight: 900; color: #15803d; }
-        .hospital-name { color: #15803d; font-weight: 700; font-size: 14px; margin: 0; }
-        .meta-box { display: flex; gap: 15px; margin-top: 10px; }
-        .meta-item { background: #f8fafc; padding: 6px 12px; border-radius: 6px; border: 1px solid #e2e8f0; }
-        .label { font-size: 10px; color: #64748b; display: block; font-weight: bold; }
-        .value { font-size: 13px; font-weight: 900; color: #1e293b; }
+        h1 { margin: 0; font-size: 24px; font-weight: 900; color: #15803d; letter-spacing: -0.5px; }
+        .hospital-name { color: #15803d; font-weight: 700; font-size: 14px; margin: 0 0 5px 0; }
+        .print-meta { font-size: 10px; color: #475569; display: flex; gap: 15px; }
+        .credits { font-size: 8px; color: #94a3b8; margin-top: 8px; font-weight: bold; }
+
+        .meta-box { display: flex; gap: 12px; margin-top: 10px; }
+        .meta-item { background: #f1f5f9; padding: 6px 14px; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .label { font-size: 9px; color: #64748b; display: block; font-weight: 800; text-transform: uppercase; margin-bottom: 2px; }
+        .value { font-size: 14px; font-weight: 900; color: #0f172a; }
+
+        .area-group { 
+          margin-bottom: 25px; 
+          page-break-inside: auto;
+        }
         
-        .area-section { margin-bottom: 30px; }
         .area-banner { 
           background: #15803d; 
           color: white; 
-          padding: 10px 15px; 
-          border-radius: 8px; 
+          padding: 10px 20px; 
+          border-radius: 10px; 
           display: flex; 
           justify-content: space-between; 
           align-items: center; 
           margin-bottom: 15px;
           page-break-inside: avoid;
+          page-break-after: avoid; /* يمنع انفصال العنوان عن الجداول */
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .area-banner h2 { margin: 0; font-size: 16px; font-weight: 700; }
-        
-        .zone-wrapper { 
-          margin-bottom: 25px; 
-          border: 1px solid #cbd5e1; 
-          border-radius: 8px; 
+        .area-title { display: flex; flex-direction: column; }
+        .label-white { font-size: 10px; font-weight: 600; opacity: 0.9; }
+        .area-name { font-size: 18px; font-weight: 900; }
+        .area-stats { font-size: 12px; font-weight: 700; display: flex; gap: 10px; align-items: center; }
+        .separator { opacity: 0.5; }
+
+        .zone-card { 
+          margin-bottom: 20px; 
+          border: 1px solid #e2e8f0; 
+          border-radius: 10px; 
           overflow: hidden; 
-          page-break-inside: avoid;
+          page-break-inside: avoid; /* يضمن بقاء الجدول الواحد في صفحة واحدة إن أمكن */
         }
         .zone-header { 
-          background: #f1f5f9; 
-          padding: 8px 15px; 
-          font-weight: 900; 
-          border-bottom: 1px solid #cbd5e1; 
+          background: #f8fafc; 
+          padding: 10px 15px; 
+          font-weight: 700; 
+          border-bottom: 1px solid #e2e8f0; 
           color: #334155;
-          font-size: 12px;
+          font-size: 13px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
         }
-        
+        .zone-count { background: #15803d; color: white; padding: 2px 10px; border-radius: 20px; font-size: 11px; }
+
         table { width: 100%; border-collapse: collapse; background: white; table-layout: fixed; }
         th { 
-          background: #f8fafc; 
-          border: 1px solid #cbd5e1; 
+          background: #f1f5f9; 
+          border: 1px solid #e2e8f0; 
           padding: 8px; 
           text-align: right; 
           font-size: 10px; 
-          font-weight: 900; 
+          font-weight: 800; 
           color: #475569;
-          word-wrap: break-word;
         }
         td { 
-          border: 1px solid #cbd5e1; 
+          border: 1px solid #e2e8f0; 
           padding: 8px; 
           font-size: 10px; 
-          vertical-align: middle; 
-          word-wrap: break-word;
+          vertical-align: middle;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
-        .font-bold { font-weight: 700; }
+        .font-bold { font-weight: 700; color: #0f172a; }
         .center { text-align: center; }
-        
+
         .footer-signatures { 
           display: flex; 
           justify-content: space-around; 
           margin-top: 40px;
-          page-break-inside: avoid;
+          padding-top: 20px;
+          border-top: 1px dashed #cbd5e1;
         }
-        .signature { text-align: center; width: 250px; }
-        .sig-label { font-size: 12px; font-weight: bold; color: #64748b; margin-bottom: 40px; }
-        .sig-line { border-top: 1.5px solid #1e293b; width: 100%; margin-bottom: 8px; }
-        .sig-name { font-weight: 900; font-size: 12px; }
-        
+        .signature { text-align: center; width: 280px; }
+        .sig-label { font-size: 13px; font-weight: 700; color: #475569; margin-bottom: 45px; }
+        .sig-line { border-top: 2px solid #334155; width: 100%; margin-bottom: 8px; }
+        .sig-name { font-weight: 900; font-size: 13px; color: #0f172a; }
+
         @media print {
-          body { -webkit-print-color-adjust: exact; margin: 0; }
-          .inspector-page:last-child { page-break-after: auto; }
-          .area-banner { background-color: #15803d !important; color: white !important; }
-          .zone-header { background-color: #f1f5f9 !important; }
+          body { margin: 0; }
+          .inspector-page { margin: 0; }
         }
       </style>
     </head>
