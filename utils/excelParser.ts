@@ -13,13 +13,14 @@ export const parseWorkersExcel = async (file: File): Promise<Worker[]> => {
         const json = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]) as any[];
 
         const workers: Worker[] = json.map((row) => {
-          // Mandatory Logic based on user prompt and image
-          const nameAr = row['NAME (AR)'] || row['اسم العامل'] || '';
+          // Mandatory Logic: Support "Area" and "Wards" from your images
+          const nameAr = row['NAME (AR)'] || row['اسم العامل'] || row['Worker Name'] || '';
           const nameEng = row['NAME (ENG)'] || '';
           const area = row['Area'] || row['AREA'] || row['المنطقة'] || 'غير مصنف';
-          const zone = row['LOCATION'] || row['Zone'] || row['الموقع'] || 'غير محدد';
+          
+          // Support "Wards", "Ward", "LOCATION", "Zone"
+          const zone = row['Wards'] || row['Ward'] || row['LOCATION'] || row['Zone'] || row['الموقع'] || 'غير محدد';
 
-          // Additional fields from image
           const category = row['Category'] || row['الفئة'];
           const sNo = row['S No'] || row['م'];
           const gender = row['G'] || row['الجنس'];
@@ -50,7 +51,7 @@ export const parseWorkersExcel = async (file: File): Promise<Worker[]> => {
         }).filter(w => w !== null) as Worker[];
 
         if (workers.length === 0) {
-          throw new Error("لم يتم العثور على بيانات صالحة. تأكد من توافق الأعمدة مع الصورة.");
+          throw new Error("لم يتم العثور على بيانات صالحة. تأكد من وجود عمود Area و Wards.");
         }
         resolve(workers);
       } catch (err) {

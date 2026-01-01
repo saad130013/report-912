@@ -41,12 +41,12 @@ export const printAssignments = (assignments: Assignment[], config: PlanConfig, 
         <div class="area-section">
           <div class="area-banner">
             <h2>المنطقة الرئيسية (AREA): ${area.name}</h2>
-            <span>${area.zones.length} مواقع | ${area.totalWorkers} عامل</span>
+            <span>${area.zones.length} مواقع/أجنحة | ${area.totalWorkers} عامل</span>
           </div>
           
           ${area.zones.map(zone => `
             <div class="zone-wrapper">
-              <div class="zone-header">الموقع (Zone): ${zone.name} | عدد العمال: ${zone.workers.length}</div>
+              <div class="zone-header">الموقع/الجناح (Ward): ${zone.name} | عدد العمال: ${zone.workers.length}</div>
               <table>
                 <thead>
                   <tr>

@@ -2,12 +2,9 @@
 import React, { useState, useMemo } from 'react';
 import { 
   FileUp, 
-  Calendar, 
   AlertCircle, 
   CheckCircle2,
   Users,
-  FileText,
-  Info,
   Download,
   Stethoscope,
   LayoutDashboard,
@@ -16,7 +13,8 @@ import {
   MousePointer2,
   Zap,
   UserPlus,
-  MapPin
+  MapPin,
+  ChevronLeft
 } from 'lucide-react';
 import { Worker, Inspector, Assignment, PlanConfig, PlanCycle, AreaData } from './types';
 import { parseWorkersExcel, parseInspectorsExcel } from './utils/excelParser';
@@ -36,14 +34,10 @@ const App: React.FC = () => {
     startDate: new Date().toISOString().split('T')[0]
   });
   
-  // Auto mode results
   const [finalAssignments, setFinalAssignments] = useState<Assignment[]>([]);
-  
-  // Manual mode state
   const [selectedManualInspector, setSelectedManualInspector] = useState<string>('');
   const [selectedManualAreas, setSelectedManualAreas] = useState<string[]>([]);
 
-  // Derived data for manual mode
   const availableAreas = useMemo(() => {
     const areaMap: Record<string, AreaData> = {};
     workers.forEach(w => {
@@ -55,8 +49,6 @@ const App: React.FC = () => {
         zoneObj = { name: w.zone, workers: [] };
         areaMap[w.area].zones.push(zoneObj);
       }
-      // Fix: Push the whole worker object 'w' instead of 'w.workerName' 
-      // which was causing the undefined error in reports
       zoneObj.workers.push(w);
       areaMap[w.area].totalWorkers += 1;
     });
@@ -99,7 +91,6 @@ const App: React.FC = () => {
       setFinalAssignments(result);
       setStep(3);
     } else {
-      // Manual Mode validation
       if (!selectedManualInspector || selectedManualAreas.length === 0) {
         setError('يرجى اختيار مفتش ومنطقة واحدة على الأقل');
         return;
@@ -111,15 +102,9 @@ const App: React.FC = () => {
   const getManualAssignment = (): Assignment[] => {
     const inspector = inspectors.find(i => i.name === selectedManualInspector);
     if (!inspector) return [];
-    
     const areas = availableAreas.filter(a => selectedManualAreas.includes(a.name));
     const totalWorkers = areas.reduce((sum, a) => sum + a.totalWorkers, 0);
-    
-    return [{
-      inspector,
-      areas,
-      totalWorkers
-    }];
+    return [{ inspector, areas, totalWorkers }];
   };
 
   const currentAssignments = mode === 'auto' ? finalAssignments : getManualAssignment();
@@ -140,7 +125,6 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen pb-20 no-print">
-      {/* Navbar */}
       <nav className="bg-white px-6 py-4 sticky top-0 z-50 glass-morphism shadow-sm">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -179,12 +163,11 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {/* Step 1: Uploads */}
         {step === 1 && (
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-4xl font-black text-slate-800 mb-3">تجهيز بيانات التفتيش</h2>
-              <p className="text-slate-500 font-medium">ارفع كشوفات العمالة والمفتشين للمتابعة</p>
+              <p className="text-slate-500 font-medium">ارفع ملفات (Area & Wards) للمتابعة</p>
             </div>
 
             <div className="grid md:grid-cols-2 gap-8">
@@ -241,9 +224,8 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {/* Step 2: Config / Manual Selection */}
         {step === 2 && (
-          <div className="max-w-4xl mx-auto space-y-8">
+          <div className="max-w-5xl mx-auto space-y-8">
             <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-50 flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="bg-blue-100 p-3 rounded-xl text-blue-600">
@@ -259,10 +241,9 @@ const App: React.FC = () => {
 
             {mode === 'manual' ? (
               <div className="grid md:grid-cols-3 gap-8">
-                {/* Manual: Inspector Select */}
                 <div className="bg-white p-8 rounded-[2rem] shadow-lg border border-slate-50">
                   <h3 className="text-lg font-black text-slate-800 mb-6 flex items-center gap-2"><UserPlus size={20} className="text-blue-500" /> 1. اختر المفتش</h3>
-                  <div className="space-y-2 overflow-y-auto max-h-[400px] pr-2">
+                  <div className="space-y-2 overflow-y-auto max-h-[500px] pr-2">
                     {inspectors.map(ins => (
                       <button
                         key={ins.name}
@@ -277,24 +258,36 @@ const App: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Manual: Areas Selection */}
                 <div className="md:col-span-2 bg-white p-8 rounded-[2rem] shadow-lg border border-slate-50">
-                  <h3 className="text-lg font-black text-slate-800 mb-6 flex items-center gap-2"><MapPin size={20} className="text-red-500" /> 2. حدد المناطق المكلف بها</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 overflow-y-auto max-h-[400px] pr-2">
+                  <h3 className="text-lg font-black text-slate-800 mb-6 flex items-center gap-2"><MapPin size={20} className="text-red-500" /> 2. حدد الـ Areas والمواقع التابعة لها</h3>
+                  <div className="grid grid-cols-1 gap-4 overflow-y-auto max-h-[500px] pr-2">
                     {availableAreas.map(area => (
-                      <button
+                      <div
                         key={area.name}
-                        onClick={() => toggleManualArea(area.name)}
-                        className={`text-right p-4 rounded-xl border-2 transition-all flex justify-between items-center ${
-                          selectedManualAreas.includes(area.name) ? 'border-blue-600 bg-blue-50' : 'border-slate-50 hover:border-slate-200'
+                        className={`p-4 rounded-2xl border-2 transition-all cursor-pointer ${
+                          selectedManualAreas.includes(area.name) ? 'border-blue-600 bg-blue-50' : 'border-slate-100 hover:border-slate-200'
                         }`}
+                        onClick={() => toggleManualArea(area.name)}
                       >
-                        <div className="flex-1">
-                          <p className={`font-black ${selectedManualAreas.includes(area.name) ? 'text-blue-900' : 'text-slate-700'}`}>{area.name}</p>
-                          <p className="text-[10px] text-slate-500 font-bold">{area.totalWorkers} عامل | {area.zones.length} مواقع</p>
+                        <div className="flex justify-between items-center mb-3">
+                          <div>
+                            <p className="font-black text-lg text-slate-800">{area.name}</p>
+                            <p className="text-xs text-blue-600 font-bold">{area.totalWorkers} موظف إجمالي</p>
+                          </div>
+                          {selectedManualAreas.includes(area.name) && <CheckCircle2 size={24} className="text-blue-600" />}
                         </div>
-                        {selectedManualAreas.includes(area.name) && <CheckCircle2 size={20} className="text-blue-600" />}
-                      </button>
+                        
+                        <div className="bg-white/50 rounded-xl p-3 border border-blue-100/50">
+                          <p className="text-[10px] font-black text-slate-400 mb-2 uppercase tracking-tighter">المواقع المشمولة (Wards):</p>
+                          <div className="flex flex-wrap gap-2">
+                            {area.zones.map(z => (
+                              <span key={z.name} className="bg-blue-100/50 text-blue-800 text-[10px] font-bold px-2 py-1 rounded-lg border border-blue-200/50">
+                                {z.name} ({z.workers.length})
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -309,7 +302,6 @@ const App: React.FC = () => {
               </div>
             )}
 
-            {/* General Config Footer */}
             <div className="bg-slate-900 p-10 rounded-[2.5rem] text-white shadow-2xl">
               <div className="grid md:grid-cols-2 gap-10">
                 <div>
@@ -338,20 +330,16 @@ const App: React.FC = () => {
                   />
                 </div>
               </div>
-              
               <div className="mt-10 pt-10 border-t border-slate-800 flex flex-col md:flex-row gap-6 items-center justify-between">
                  <div className="text-right">
                     {mode === 'manual' && selectedManualInspector && (
                        <p className="font-bold text-blue-400">سيتم إصدار تقرير للمفتش: <span className="text-white underline">{selectedManualInspector}</span></p>
                     )}
-                    {mode === 'manual' && selectedManualAreas.length > 0 && (
-                       <p className="text-xs font-bold text-slate-500 mt-1">المناطق المختارة يدوياً: {selectedManualAreas.length} منطقة</p>
-                    )}
                  </div>
                  <div className="flex gap-4 w-full md:w-auto">
                     <button onClick={() => setStep(1)} className="flex-1 md:px-10 py-5 border-2 border-slate-700 text-slate-400 font-black rounded-2xl hover:bg-slate-800 transition-all">رجوع</button>
                     <button onClick={generatePlan} className="flex-[2] md:px-20 py-5 bg-blue-600 text-white font-black rounded-2xl hover:bg-blue-700 shadow-xl shadow-blue-500/20 transition-all">
-                      {mode === 'auto' ? 'توليد الخطة كاملة' : 'إصدار التقرير المخصص'}
+                      توليد الخطة
                     </button>
                  </div>
               </div>
@@ -359,30 +347,20 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {/* Step 3: Final Reports Dashboard */}
         {step === 3 && (
           <div className="max-w-6xl mx-auto space-y-8">
             <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-50 flex flex-col md:flex-row items-center justify-between gap-6">
               <div>
                 <h2 className="text-3xl font-black text-slate-800">التقارير الجاهزة</h2>
-                <p className="text-slate-500 font-bold mt-1">الوضع المستخدم: {mode === 'auto' ? 'تلقائي' : 'يدوي مخصص'}</p>
+                <p className="text-slate-500 font-bold mt-1">المناطق المكلفة تم تجميعها حسب الـ AREA والـ Wards التابعة لها.</p>
               </div>
               <div className="flex flex-wrap justify-center gap-3">
                 {mode === 'auto' && (
-                  <button 
-                    onClick={() => handlePDFExport(null)}
-                    className="flex items-center gap-2 bg-slate-900 text-white px-8 py-4 rounded-2xl font-black hover:bg-black transition-all shadow-xl text-sm"
-                  >
-                    <FileDown size={18} />
-                    حفظ PDF الشامل
+                  <button onClick={() => handlePDFExport(null)} className="flex items-center gap-2 bg-slate-900 text-white px-8 py-4 rounded-2xl font-black hover:bg-black transition-all shadow-xl text-sm">
+                    <FileDown size={18} /> حفظ PDF الشامل
                   </button>
                 )}
-                <button 
-                  onClick={() => setStep(2)}
-                  className="text-blue-600 px-6 py-4 font-black hover:bg-blue-50 rounded-2xl transition-all text-sm"
-                >
-                  {mode === 'auto' ? 'تعديل التوزيع' : 'تغيير المفتش / المناطق'}
-                </button>
+                <button onClick={() => setStep(2)} className="text-blue-600 px-6 py-4 font-black hover:bg-blue-50 rounded-2xl transition-all text-sm">تعديل التوزيع</button>
               </div>
             </div>
 
@@ -395,18 +373,19 @@ const App: React.FC = () => {
                       <h3 className="text-xl font-black text-slate-800">{assign.inspector.name}</h3>
                     </div>
                   </div>
-
                   <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-6 w-full">
-                    <div className="bg-slate-50/50 p-4 rounded-2xl">
-                      <p className="text-slate-400 text-[10px] font-black mb-1">المناطق</p>
+                    <div className="bg-slate-50/50 p-4 rounded-2xl text-center">
+                      <p className="text-slate-400 text-[10px] font-black mb-1">المناطق (Areas)</p>
                       <p className="text-2xl font-black text-slate-800">{assign.areas.length}</p>
                     </div>
-                    <div className="bg-slate-50/50 p-4 rounded-2xl">
-                      <p className="text-slate-400 text-[10px] font-black mb-1">العمالة</p>
-                      <p className="text-2xl font-black text-blue-600">{assign.totalWorkers}</p>
+                    <div className="bg-slate-50/50 p-4 rounded-2xl text-center">
+                      <p className="text-slate-400 text-[10px] font-black mb-1">المواقع (Wards)</p>
+                      <p className="text-2xl font-black text-blue-600">
+                        {assign.areas.reduce((acc, a) => acc + a.zones.length, 0)}
+                      </p>
                     </div>
                     <div className="col-span-2">
-                      <p className="text-slate-400 text-[10px] font-black mb-2">النطاق المكلف به</p>
+                      <p className="text-slate-400 text-[10px] font-black mb-2">المناطق الرئيسية المكلف بها:</p>
                       <div className="flex flex-wrap gap-2">
                         {assign.areas.map((a, i) => (
                           <span key={i} className="bg-white text-slate-700 text-[10px] font-black px-3 py-1.5 rounded-lg border border-slate-200">{a.name}</span>
@@ -414,21 +393,12 @@ const App: React.FC = () => {
                       </div>
                     </div>
                   </div>
-
                   <div className="flex flex-row lg:flex-col gap-3 w-full lg:w-auto">
-                    <button 
-                      onClick={() => handlePDFExport(assign.inspector.name)}
-                      className="flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl text-xs font-black hover:bg-blue-700 transition-all shadow-lg shadow-blue-100"
-                    >
-                      <FileDown size={16} />
-                      PDF عرضي
+                    <button onClick={() => handlePDFExport(assign.inspector.name)} className="flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl text-xs font-black hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">
+                      <FileDown size={16} /> PDF
                     </button>
-                    <button 
-                      onClick={() => handleWordExport(assign.inspector.name)}
-                      className="flex-1 flex items-center justify-center gap-2 border border-slate-200 text-slate-600 px-6 py-3 rounded-xl text-xs font-black hover:bg-slate-50 transition-all"
-                    >
-                      <Download size={16} />
-                      Word
+                    <button onClick={() => handleWordExport(assign.inspector.name)} className="flex-1 flex items-center justify-center gap-2 border border-slate-200 text-slate-600 px-6 py-3 rounded-xl text-xs font-black hover:bg-slate-50 transition-all">
+                      <Download size={16} /> Word
                     </button>
                   </div>
                 </div>
