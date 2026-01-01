@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { 
   FileUp, 
@@ -283,7 +284,7 @@ const App: React.FC = () => {
                           <p className="text-[10px] font-black text-slate-400 mb-2 uppercase tracking-tighter">المواقع المشمولة (Wards):</p>
                           <div className="flex flex-wrap gap-2">
                             {area.zones.map(z => (
-                              <span key={z.name} className="bg-green-100/50 text-green-800 text-[10px] font-bold px-2 py-1 rounded-lg border border-green-200/50">
+                              <span key={z.name} className="bg-green-100/50 text-green-800 text-[10px] font-bold px-2 py-1 rounded-lg border border-blue-200/50">
                                 {z.name} ({z.workers.length})
                               </span>
                             ))}
@@ -375,7 +376,7 @@ const App: React.FC = () => {
                       <h3 className="text-xl font-black text-slate-800">{assign.inspector.name}</h3>
                     </div>
                   </div>
-                  <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-6 w-full">
+                  <div className="flex-1 grid grid-cols-2 md:grid-cols-3 gap-6 w-full">
                     <div className="bg-slate-50/50 p-4 rounded-2xl text-center">
                       <p className="text-slate-400 text-[10px] font-black mb-1">المناطق (Areas)</p>
                       <p className="text-2xl font-black text-slate-800">{assign.areas.length}</p>
@@ -386,7 +387,13 @@ const App: React.FC = () => {
                         {assign.areas.reduce((acc, a) => acc + a.zones.length, 0)}
                       </p>
                     </div>
-                    <div className="col-span-2">
+                    <div className="bg-green-50/50 p-4 rounded-2xl text-center">
+                      <p className="text-green-600/70 text-[10px] font-black mb-1">إجمالي العمالة</p>
+                      <p className="text-2xl font-black text-slate-900">
+                        {assign.totalWorkers}
+                      </p>
+                    </div>
+                    <div className="col-span-2 md:col-span-3">
                       <p className="text-slate-400 text-[10px] font-black mb-2">المناطق الرئيسية المكلف بها:</p>
                       <div className="flex flex-wrap gap-2">
                         {assign.areas.map((a, i) => (
