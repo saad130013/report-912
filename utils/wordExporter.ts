@@ -1,4 +1,3 @@
-
 import { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, AlignmentType, PageOrientation, ShadingType } from 'docx';
 import * as FileSaverNamespace from 'file-saver';
 import { Assignment, PlanConfig } from '../types';
@@ -13,7 +12,12 @@ export const exportToWord = async (assignments: Assignment[], config: PlanConfig
   const sections = targetAssignments.map(assign => {
     const children: any[] = [
       new Paragraph({
-        children: [new TextRun({ text: "جدول تفتيش العمالة - التقرير الرسمي", bold: true, size: 36, color: "1E3A8A" })],
+        children: [new TextRun({ text: "إدارة الخدمات البيئية بمستشفى الحرس الوطني", bold: true, size: 28, color: "15803D" })],
+        alignment: AlignmentType.CENTER,
+        spacing: { after: 100 },
+      }),
+      new Paragraph({
+        children: [new TextRun({ text: "جدول تفتيش العمالة - التقرير الرسمي", bold: true, size: 36, color: "15803D" })],
         alignment: AlignmentType.CENTER,
         spacing: { after: 200 },
       }),
@@ -33,7 +37,7 @@ export const exportToWord = async (assignments: Assignment[], config: PlanConfig
       children.push(
         new Paragraph({
           children: [new TextRun({ text: `المنطقة الرئيسية: ${area.name} (إجمالي: ${area.totalWorkers})`, bold: true, size: 22, color: "FFFFFF" })],
-          shading: { fill: "1E3A8A", type: ShadingType.CLEAR },
+          shading: { fill: "15803D", type: ShadingType.CLEAR },
           spacing: { before: 200, after: 100 },
           alignment: AlignmentType.RIGHT,
         })
@@ -87,6 +91,12 @@ export const exportToWord = async (assignments: Assignment[], config: PlanConfig
     children.push(new Paragraph({
       children: [new TextRun({ text: "توقيع المفتش: ___________________          اعتماد الإدارة: ___________________", size: 20 })],
       alignment: AlignmentType.CENTER,
+    }));
+    
+    children.push(new Paragraph({
+      children: [new TextRun({ text: "حقوق البرنامج: ليلى سفر العتيبي", size: 14, color: "94A3B8" })],
+      alignment: AlignmentType.CENTER,
+      spacing: { before: 200 }
     }));
 
     return {

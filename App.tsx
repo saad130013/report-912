@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { 
   FileUp, 
@@ -14,7 +13,8 @@ import {
   Zap,
   UserPlus,
   MapPin,
-  ChevronLeft
+  ChevronLeft,
+  Heart
 } from 'lucide-react';
 import { Worker, Inspector, Assignment, PlanConfig, PlanCycle, AreaData } from './types';
 import { parseWorkersExcel, parseInspectorsExcel } from './utils/excelParser';
@@ -124,29 +124,31 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen pb-20 no-print">
+    <div className="min-h-screen pb-20 no-print flex flex-col">
       <nav className="bg-white px-6 py-4 sticky top-0 z-50 glass-morphism shadow-sm">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="bg-blue-600 p-2 rounded-xl text-white shadow-lg shadow-blue-200">
+            <div className="bg-green-700 p-2 rounded-xl text-white shadow-lg shadow-green-200">
               <Stethoscope size={24} />
             </div>
             <div>
-              <h1 className="text-xl font-black text-slate-800 leading-none">مستشفى الرعاية الذكية</h1>
-              <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">إدارة الجودة والتفتيش</span>
+              <h1 className="text-xl font-black text-slate-800 leading-none">إدارة الخدمات البيئية بمستشفى الحرس الوطني</h1>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-[10px] font-bold text-green-600 uppercase tracking-widest">حقوق البرنامج: ليلى سفر العتيبي</span>
+              </div>
             </div>
           </div>
           <div className="hidden md:flex items-center gap-4">
              <div className="bg-slate-100 p-1 rounded-xl flex">
                 <button 
                   onClick={() => setMode('auto')}
-                  className={`px-4 py-2 rounded-lg text-xs font-black transition-all flex items-center gap-2 ${mode === 'auto' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500'}`}
+                  className={`px-4 py-2 rounded-lg text-xs font-black transition-all flex items-center gap-2 ${mode === 'auto' ? 'bg-white shadow-sm text-green-700' : 'text-slate-500'}`}
                 >
                   <Zap size={14} /> توزيع تلقائي
                 </button>
                 <button 
                   onClick={() => setMode('manual')}
-                  className={`px-4 py-2 rounded-lg text-xs font-black transition-all flex items-center gap-2 ${mode === 'manual' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500'}`}
+                  className={`px-4 py-2 rounded-lg text-xs font-black transition-all flex items-center gap-2 ${mode === 'manual' ? 'bg-white shadow-sm text-green-700' : 'text-slate-500'}`}
                 >
                   <MousePointer2 size={14} /> اختيار يدوي
                 </button>
@@ -155,7 +157,7 @@ const App: React.FC = () => {
         </div>
       </nav>
 
-      <main className="container mx-auto px-4 mt-8">
+      <main className="container mx-auto px-4 mt-8 flex-grow">
         {error && (
           <div className="max-w-xl mx-auto bg-red-50 border-r-4 border-red-500 p-4 mb-8 flex items-center gap-3 text-red-700 rounded-xl shadow-sm">
             <AlertCircle size={20} />
@@ -216,7 +218,7 @@ const App: React.FC = () => {
               <button 
                 onClick={() => setStep(2)}
                 disabled={workers.length === 0 || inspectors.length === 0}
-                className="bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 text-white px-20 py-5 rounded-2xl font-black text-lg shadow-2xl shadow-blue-200 transition-all active:scale-95 disabled:shadow-none"
+                className="bg-green-700 hover:bg-green-800 disabled:bg-slate-300 text-white px-20 py-5 rounded-2xl font-black text-lg shadow-2xl shadow-green-200 transition-all active:scale-95 disabled:shadow-none"
               >
                 المتابعة للإعداد
               </button>
@@ -228,28 +230,28 @@ const App: React.FC = () => {
           <div className="max-w-5xl mx-auto space-y-8">
             <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-50 flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="bg-blue-100 p-3 rounded-xl text-blue-600">
+                <div className="bg-green-100 p-3 rounded-xl text-green-700">
                   <LayoutDashboard size={24} />
                 </div>
                 <h2 className="text-2xl font-black text-slate-800">إعداد تقرير التفتيش ({mode === 'auto' ? 'تلقائي' : 'يدوي'})</h2>
               </div>
               <div className="flex bg-slate-100 p-1 rounded-xl">
-                 <button onClick={() => setMode('auto')} className={`px-4 py-2 rounded-lg text-xs font-black transition-all ${mode === 'auto' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-400'}`}>تلقائي</button>
-                 <button onClick={() => setMode('manual')} className={`px-4 py-2 rounded-lg text-xs font-black transition-all ${mode === 'manual' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-400'}`}>يدوي</button>
+                 <button onClick={() => setMode('auto')} className={`px-4 py-2 rounded-lg text-xs font-black transition-all ${mode === 'auto' ? 'bg-white shadow-sm text-green-700' : 'text-slate-400'}`}>تلقائي</button>
+                 <button onClick={() => setMode('manual')} className={`px-4 py-2 rounded-lg text-xs font-black transition-all ${mode === 'manual' ? 'bg-white shadow-sm text-green-700' : 'text-slate-400'}`}>يدوي</button>
               </div>
             </div>
 
             {mode === 'manual' ? (
               <div className="grid md:grid-cols-3 gap-8">
                 <div className="bg-white p-8 rounded-[2rem] shadow-lg border border-slate-50">
-                  <h3 className="text-lg font-black text-slate-800 mb-6 flex items-center gap-2"><UserPlus size={20} className="text-blue-500" /> 1. اختر المفتش</h3>
+                  <h3 className="text-lg font-black text-slate-800 mb-6 flex items-center gap-2"><UserPlus size={20} className="text-green-600" /> 1. اختر المفتش</h3>
                   <div className="space-y-2 overflow-y-auto max-h-[500px] pr-2">
                     {inspectors.map(ins => (
                       <button
                         key={ins.name}
                         onClick={() => setSelectedManualInspector(ins.name)}
                         className={`w-full text-right p-4 rounded-xl font-bold border-2 transition-all ${
-                          selectedManualInspector === ins.name ? 'border-blue-600 bg-blue-50 text-blue-800 shadow-md' : 'border-slate-50 text-slate-600 hover:border-slate-200'
+                          selectedManualInspector === ins.name ? 'border-green-700 bg-green-50 text-green-800 shadow-md' : 'border-slate-50 text-slate-600 hover:border-slate-200'
                         }`}
                       >
                         {ins.name}
@@ -265,23 +267,23 @@ const App: React.FC = () => {
                       <div
                         key={area.name}
                         className={`p-4 rounded-2xl border-2 transition-all cursor-pointer ${
-                          selectedManualAreas.includes(area.name) ? 'border-blue-600 bg-blue-50' : 'border-slate-100 hover:border-slate-200'
+                          selectedManualAreas.includes(area.name) ? 'border-green-700 bg-green-50' : 'border-slate-100 hover:border-slate-200'
                         }`}
                         onClick={() => toggleManualArea(area.name)}
                       >
                         <div className="flex justify-between items-center mb-3">
                           <div>
                             <p className="font-black text-lg text-slate-800">{area.name}</p>
-                            <p className="text-xs text-blue-600 font-bold">{area.totalWorkers} موظف إجمالي</p>
+                            <p className="text-xs text-green-700 font-bold">{area.totalWorkers} موظف إجمالي</p>
                           </div>
-                          {selectedManualAreas.includes(area.name) && <CheckCircle2 size={24} className="text-blue-600" />}
+                          {selectedManualAreas.includes(area.name) && <CheckCircle2 size={24} className="text-green-700" />}
                         </div>
                         
-                        <div className="bg-white/50 rounded-xl p-3 border border-blue-100/50">
+                        <div className="bg-white/50 rounded-xl p-3 border border-green-100/50">
                           <p className="text-[10px] font-black text-slate-400 mb-2 uppercase tracking-tighter">المواقع المشمولة (Wards):</p>
                           <div className="flex flex-wrap gap-2">
                             {area.zones.map(z => (
-                              <span key={z.name} className="bg-blue-100/50 text-blue-800 text-[10px] font-bold px-2 py-1 rounded-lg border border-blue-200/50">
+                              <span key={z.name} className="bg-green-100/50 text-green-800 text-[10px] font-bold px-2 py-1 rounded-lg border border-green-200/50">
                                 {z.name} ({z.workers.length})
                               </span>
                             ))}
@@ -295,7 +297,7 @@ const App: React.FC = () => {
             ) : (
               <div className="bg-white p-10 rounded-[2rem] shadow-lg border border-slate-50 text-center">
                  <div className="max-w-md mx-auto py-10">
-                    <Zap size={48} className="text-blue-500 mx-auto mb-6" />
+                    <Zap size={48} className="text-green-600 mx-auto mb-6" />
                     <h3 className="text-xl font-black mb-2">التوزيع التلقائي الذكي</h3>
                     <p className="text-slate-500 font-bold text-sm mb-8">سيقوم النظام بتوزيع جميع المناطق ({availableAreas.length}) على المفتشين المتاحين ({inspectors.length}) لضمان العدالة وتغطية كاملة للمستشفى.</p>
                  </div>
@@ -326,19 +328,19 @@ const App: React.FC = () => {
                     type="date"
                     value={config.startDate}
                     onChange={(e) => setConfig({ ...config, startDate: e.target.value })}
-                    className="w-full bg-slate-800 border-2 border-slate-700 rounded-xl p-4 text-white font-black outline-none focus:border-blue-500 transition-all"
+                    className="w-full bg-slate-800 border-2 border-slate-700 rounded-xl p-4 text-white font-black outline-none focus:border-green-700 transition-all"
                   />
                 </div>
               </div>
               <div className="mt-10 pt-10 border-t border-slate-800 flex flex-col md:flex-row gap-6 items-center justify-between">
                  <div className="text-right">
                     {mode === 'manual' && selectedManualInspector && (
-                       <p className="font-bold text-blue-400">سيتم إصدار تقرير للمفتش: <span className="text-white underline">{selectedManualInspector}</span></p>
+                       <p className="font-bold text-green-400">سيتم إصدار تقرير للمفتش: <span className="text-white underline">{selectedManualInspector}</span></p>
                     )}
                  </div>
                  <div className="flex gap-4 w-full md:w-auto">
                     <button onClick={() => setStep(1)} className="flex-1 md:px-10 py-5 border-2 border-slate-700 text-slate-400 font-black rounded-2xl hover:bg-slate-800 transition-all">رجوع</button>
-                    <button onClick={generatePlan} className="flex-[2] md:px-20 py-5 bg-blue-600 text-white font-black rounded-2xl hover:bg-blue-700 shadow-xl shadow-blue-500/20 transition-all">
+                    <button onClick={generatePlan} className="flex-[2] md:px-20 py-5 bg-green-700 text-white font-black rounded-2xl hover:bg-green-800 shadow-xl shadow-green-500/20 transition-all">
                       توليد الخطة
                     </button>
                  </div>
@@ -360,16 +362,16 @@ const App: React.FC = () => {
                     <FileDown size={18} /> حفظ PDF الشامل
                   </button>
                 )}
-                <button onClick={() => setStep(2)} className="text-blue-600 px-6 py-4 font-black hover:bg-blue-50 rounded-2xl transition-all text-sm">تعديل التوزيع</button>
+                <button onClick={() => setStep(2)} className="text-green-700 px-6 py-4 font-black hover:bg-green-50 rounded-2xl transition-all text-sm">تعديل التوزيع</button>
               </div>
             </div>
 
             <div className="grid gap-6">
               {currentAssignments.map((assign, idx) => (
                 <div key={idx} className="bg-white border border-slate-100 rounded-[2.5rem] p-8 flex flex-col lg:flex-row items-center gap-8 shadow-sm hover:shadow-2xl transition-all duration-300 group">
-                  <div className="bg-slate-50 group-hover:bg-blue-50 p-6 rounded-[2rem] flex items-center justify-center min-w-[200px] text-center transition-colors">
+                  <div className="bg-slate-50 group-hover:bg-green-50 p-6 rounded-[2rem] flex items-center justify-center min-w-[200px] text-center transition-colors">
                     <div>
-                      <span className="text-[10px] text-blue-500 font-black uppercase tracking-widest block mb-2">المفتش المسؤول</span>
+                      <span className="text-[10px] text-green-700 font-black uppercase tracking-widest block mb-2">المفتش المسؤول</span>
                       <h3 className="text-xl font-black text-slate-800">{assign.inspector.name}</h3>
                     </div>
                   </div>
@@ -380,7 +382,7 @@ const App: React.FC = () => {
                     </div>
                     <div className="bg-slate-50/50 p-4 rounded-2xl text-center">
                       <p className="text-slate-400 text-[10px] font-black mb-1">المواقع (Wards)</p>
-                      <p className="text-2xl font-black text-blue-600">
+                      <p className="text-2xl font-black text-green-700">
                         {assign.areas.reduce((acc, a) => acc + a.zones.length, 0)}
                       </p>
                     </div>
@@ -394,7 +396,7 @@ const App: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex flex-row lg:flex-col gap-3 w-full lg:w-auto">
-                    <button onClick={() => handlePDFExport(assign.inspector.name)} className="flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl text-xs font-black hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">
+                    <button onClick={() => handlePDFExport(assign.inspector.name)} className="flex-1 flex items-center justify-center gap-2 bg-green-700 text-white px-6 py-3 rounded-xl text-xs font-black hover:bg-green-800 transition-all shadow-lg shadow-green-100">
                       <FileDown size={16} /> PDF
                     </button>
                     <button onClick={() => handleWordExport(assign.inspector.name)} className="flex-1 flex items-center justify-center gap-2 border border-slate-200 text-slate-600 px-6 py-3 rounded-xl text-xs font-black hover:bg-slate-50 transition-all">
@@ -407,6 +409,15 @@ const App: React.FC = () => {
           </div>
         )}
       </main>
+
+      <footer className="mt-auto py-8 bg-slate-50 border-t border-slate-200 no-print">
+        <div className="container mx-auto px-4 text-center">
+          <p className="text-slate-500 font-bold flex items-center justify-center gap-2">
+            تم التطوير بواسطة <Heart size={14} className="text-red-500 fill-current" /> ليلى سفر العتيبي
+          </p>
+          <p className="text-slate-400 text-xs mt-1">إدارة الخدمات البيئية بمستشفى الحرس الوطني - جميع الحقوق محفوظة &copy; {new Date().getFullYear()}</p>
+        </div>
+      </footer>
     </div>
   );
 };

@@ -1,4 +1,3 @@
-
 import { Assignment, PlanConfig } from '../types';
 
 export const printAssignments = (assignments: Assignment[], config: PlanConfig, filterName: string | null = null) => {
@@ -31,9 +30,10 @@ export const printAssignments = (assignments: Assignment[], config: PlanConfig, 
           </div>
         </div>
         <div class="header-left">
-          <p class="hospital-name">مستشفى الرعاية الذكية</p>
+          <p class="hospital-name">إدارة الخدمات البيئية بمستشفى الحرس الوطني</p>
           <p>تاريخ البدء: ${config.startDate}</p>
           <p>إجمالي العمالة: ${assign.totalWorkers}</p>
+          <p style="font-size: 8px; color: #94a3b8; margin-top: 5px;">حقوق البرنامج: ليلى سفر العتيبي</p>
         </div>
       </div>
 
@@ -105,15 +105,15 @@ export const printAssignments = (assignments: Assignment[], config: PlanConfig, 
         @page { size: A4 landscape; margin: 8mm; }
         .page-break { page-break-after: always; padding: 10px; }
         .header { display: flex; justify-content: space-between; border-bottom: 2px solid #1a202c; padding-bottom: 10px; margin-bottom: 20px; }
-        h1 { margin: 0; font-size: 22px; font-weight: 900; color: #1e3a8a; }
-        .hospital-name { color: #2563eb; font-weight: 700; font-size: 16px; margin: 0; }
+        h1 { margin: 0; font-size: 22px; font-weight: 900; color: #15803d; }
+        .hospital-name { color: #15803d; font-weight: 700; font-size: 14px; margin: 0; }
         .meta-box { display: flex; gap: 15px; margin-top: 10px; }
         .meta-item { background: #f8fafc; padding: 6px 12px; border-radius: 6px; border: 1px solid #e2e8f0; }
         .label { font-size: 10px; color: #64748b; display: block; font-weight: bold; }
         .value { font-size: 13px; font-weight: 900; color: #1e293b; }
         
         .area-section { margin-bottom: 20px; }
-        .area-banner { background: #1e3a8a; color: white; padding: 8px 15px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .area-banner { background: #15803d; color: white; padding: 8px 15px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .area-banner h2 { margin: 0; font-size: 16px; font-weight: 700; }
         
         .zone-wrapper { margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 4px; overflow: hidden; }
@@ -133,7 +133,7 @@ export const printAssignments = (assignments: Assignment[], config: PlanConfig, 
         
         @media print {
           body { -webkit-print-color-adjust: exact; }
-          .area-banner { background-color: #1e3a8a !important; color: white !important; }
+          .area-banner { background-color: #15803d !important; color: white !important; }
           .zone-header { background-color: #f1f5f9 !important; }
         }
       </style>
